@@ -1,3 +1,65 @@
+import { WS_URL } from "./constants";
+import { MNEMONIC_PHRASE } from "./secrets";
+
+import type { EventRecord } from '@polkadot/types/interfaces';
+
+import { KeyringPair } from "@polkadot/keyring/types";
+import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
+import { SubmittableExtrinsic } from "@polkadot/api/types";
+import { ISubmittableResult } from "@polkadot/types/types";
+import { CodecHash } from "@polkadot/types/interfaces";
+import { cryptoWaitReady } from "@polkadot/util-crypto";
+
+export const getSendRemark = (from: string, to: string) => {
+    return `RMRK::SEND::2.0.0::${from}::${to}`
+}
+
+export const getApi = async (wsEndpoint: string): Promise<ApiPromise> => {
+    const wsProvider = new WsProvider(wsEndpoint);
+    const api = ApiPromise.create({ provider: wsProvider });
+    return api;
+};
+
+export const getKeys = (): KeyringPair[] => {
+    const k = [];
+    const keyring = new Keyring({ type: "sr25519" });
+    k.push(keyring.addFromMnemonic(MNEMONIC_PHRASE));
+    return k;
+};
+
+export const getKeyringFromUri = (phrase: string): KeyringPair => {
+    const keyring = new Keyring({ type: "sr25519" });
+    return keyring.addFromUri(phrase);
+};
+
+export const sendRemarks = async (remarks: string[]) => {
+    await cryptoWaitReady();
+    const accounts = getKeys();
+    const ws = WS_URL;
+    const phrase = MNEMONIC_PHRASE;
+    const kp = getKeyringFromUri(phrase);
+    const api = await getApi(ws);
+
+    const txs = remarks.map((remark) => api.tx.system.remark(remark));
+    const tx = api.tx.utility.batchAll(txs);
+    const { block } = await sendAndFinalize(tx, kp);
+    console.log("NFT sent at block: ", block);
+    return block;
+}
+
+export const sendRemark = async (remark: string) => {
+    await cryptoWaitReady();
+    const accounts = getKeys();
+    const ws = WS_URL;
+    const phrase = MNEMONIC_PHRASE;
+    const kp = getKeyringFromUri(phrase);
+    const api = await getApi(ws);
+
+    const tx = api.tx.system.remark(remark);
+    const { block } = await sendAndFinalize(tx, kp);
+    console.log("NFT sent at block: ", block);
+    return block;
+}
 
 export const sendAndFinalize = async (
     tx: SubmittableExtrinsic<"promise", ISubmittableResult>,
@@ -11,7 +73,7 @@ export const sendAndFinalize = async (
 }> => {
     return new Promise(async (resolve) => {
         let success = false;
-        let included = [];
+        let included: EventRecord[] = [];
         let finalized = [];
         let block = 0;
         let unsubscribe = await tx.signAndSend(

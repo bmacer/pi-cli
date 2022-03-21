@@ -1,3 +1,6 @@
 .env
 yarn.lock
 .yarn-integrity
+secrets.ts
+node_modules
+package-lock.json

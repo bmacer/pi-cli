@@ -1,0 +1,28 @@
+{
+  "name": "pi-cmd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@pinata/sdk": "^1.1.23",
+    "@polkadot/api": "^7.10.1",
+    "@polkadot/keyring": "^8.4.1",
+    "@polkadot/util-crypto": "^8.4.1",
+    "@polkadot/x-randomvalues": "^8.4.1",
+    "@types/node": "^16.9.6",
+    "dotenv": "^10.0.0",
+    "nanoid": "^3.1.25",
+    "p-limit": "^3.1.0",
+    "prettier": "^2.3.2",
+    "prompt-sync": "^4.2.0",
+    "readline-sync": "^1.4.10",
+    "rmrk-tools": "2.0.11",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
