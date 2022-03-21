@@ -6,7 +6,11 @@ const run = async () => {
     const recipient = prompt("Recipient: ");
     let remark = getSendRemark(item, recipient);
     console.log(remark);
-    prompt('Enter to continue, CTRL-C to quit.');
+    const cont = prompt('Enter to continue, CTRL-C to quit.');
+    if (cont != "") {
+        console.log("Quitting...");
+        process.exit(0);
+    }
     console.log("Continuing...");
     await sendRemark(remark);
     process.exit(0);
